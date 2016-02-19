@@ -12,6 +12,8 @@ My branch of Quakespasm with some minor features and changes.
 + Scoot centerprint messages up off the crosshair
 + Widescreen status bar 
     - (hacky, this will probably be redone)
++ "vid_width 0" or "vid_height 0" to use desktop resolution
+    - Handy as a default setting
 
 Upcoming:
 + Make the font textures use a texture atlas to prevent bleeding on seams
