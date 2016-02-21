@@ -497,7 +497,7 @@ static qboolean VID_ValidMode (int width, int height, int bpp, qboolean fullscre
 // ignore width / height / bpp if vid_desktopfullscreen is enabled
     if (fullscreen && vid_desktopfullscreen.value)
         return true;
-    
+
 	if (width < 320)
 		return false;
 
@@ -542,7 +542,7 @@ static qboolean VID_SetMode (int width, int height, int bpp, qboolean fullscreen
 	char		caption[50];
 	int		depthbits, stencilbits;
 	int		fsaa_obtained;
-	
+
 	// so Con_Printfs don't mess us up by forcing vid and snd updates
 	temp = scr_disabled_for_loading;
 	scr_disabled_for_loading = true;
@@ -746,7 +746,7 @@ static void VID_Restart (void)
 				width, height, bpp, fullscreen? "fullscreen" : "windowed");
 		return;
 	}
-	
+
 // ericw -- OS X, SDL1: textures, VBO's invalid after mode change
 //          OS X, SDL2: still valid after mode change
 // To handle both cases, delete all GL objects (textures, VBO, GLSL) now.
@@ -962,7 +962,7 @@ static void GL_CheckExtensions (void)
 		{
 			Con_Printf("FOUND: ARB_multitexture\n");
 			gl_mtexable = true;
-			
+
 			glGetIntegerv(GL_MAX_TEXTURE_UNITS, &gl_max_texture_units);
 			Con_Printf("GL_MAX_TEXTURE_UNITS: %d\n", (int)gl_max_texture_units);
 		}
@@ -1106,7 +1106,7 @@ static void GL_CheckExtensions (void)
 	{
 		Con_Warning ("texture_non_power_of_two not supported\n");
 	}
-	
+
 	// GLSL
 	//
 	if (COM_CheckParm("-noglsl"))
@@ -1173,7 +1173,7 @@ static void GL_CheckExtensions (void)
 	{
 		Con_Warning ("OpenGL version < 2, GLSL not available\n");
 	}
-	
+
 	// GLSL gamma
 	//
 	if (COM_CheckParm("-noglslgamma"))
@@ -1186,7 +1186,7 @@ static void GL_CheckExtensions (void)
 	{
 		Con_Warning ("GLSL gamma not available, using hardware gamma\n");
 	}
-    
+
     // GLSL alias model rendering
     //
 	if (COM_CheckParm("-noglslalias"))
@@ -1244,7 +1244,7 @@ static void GL_Init (void)
 	Con_SafePrintf ("GL_VENDOR: %s\n", gl_vendor);
 	Con_SafePrintf ("GL_RENDERER: %s\n", gl_renderer);
 	Con_SafePrintf ("GL_VERSION: %s\n", gl_version);
-	
+
 	if (gl_version == NULL || sscanf(gl_version, "%d.%d", &gl_version_major, &gl_version_minor) < 2)
 	{
 		gl_version_major = 0;
@@ -1276,7 +1276,7 @@ static void GL_Init (void)
 	//johnfitz
 
 	GLAlias_CreateShaders ();
-	GL_ClearBufferBindings ();	
+	GL_ClearBufferBindings ();
 }
 
 /*
@@ -1674,7 +1674,7 @@ void	VID_Toggle (void)
 	// keep all the mode changing code in one place.
 	static qboolean vid_toggle_works = false;
 	qboolean toggleWorked;
-	Uint32 flags = 0;
+
 
 	S_ClearBuffer ();
 
@@ -1693,6 +1693,8 @@ void	VID_Toggle (void)
 	}
 
 #if defined(USE_SDL2)
+    Uint32 flags = 0;
+
 	if (!VID_GetFullscreen())
 	{
 		flags = vid_desktopfullscreen.value ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_FULLSCREEN;

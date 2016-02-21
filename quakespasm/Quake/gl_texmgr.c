@@ -357,7 +357,7 @@ void TexMgr_FreeTexture (gltexture_t *kill)
 
 	if (in_reload_images)
 		return;
-	
+
 	if (kill == NULL)
 	{
 		Con_Printf ("TexMgr_FreeTexture: NULL texture\n");
@@ -552,14 +552,15 @@ choose safe warpimage size and resize existing warpimage textures
 */
 void TexMgr_RecalcWarpImageSize (void)
 {
-	int	mark, oldsize;
+	int	mark;
+	//int oldsize;
 	gltexture_t *glt;
 	byte *dummy;
 
 	//
 	// find the new correct size
 	//
-	oldsize = gl_warpimagesize;
+	//oldsize = gl_warpimagesize;
 
 	gl_warpimagesize = TexMgr_SafeTextureSize (512);
 
@@ -572,7 +573,7 @@ void TexMgr_RecalcWarpImageSize (void)
 	// after vid_restart TexMgr_ReloadImage reloads textures
 	// to tx->source_width/source_height, which might not match oldsize.
 	// fixes: https://sourceforge.net/p/quakespasm/bugs/13/
-	
+
 	//
 	// resize the textures in opengl
 	//
@@ -1413,7 +1414,7 @@ void TexMgr_ReloadImages (void)
 		glGenTextures(1, &glt->texnum);
 		TexMgr_ReloadImage (glt, -1, -1);
 	}
-	
+
 	in_reload_images = false;
 }
 
@@ -1452,7 +1453,7 @@ void GL_SelectTexture (GLenum target)
 {
 	if (target == currenttarget)
 		return;
-		
+
 	GL_SelectTextureFunc(target);
 	currenttarget = target;
 }
@@ -1527,7 +1528,7 @@ static void GL_DeleteTexture (gltexture_t *texture)
 /*
 ================
 GL_ClearBindings -- ericw
- 
+
 Invalidates cached bindings, so the next GL_Bind calls for each TMU will
 make real glBindTexture calls.
 Call this after changing the binding outside of GL_Bind.
