@@ -1,0 +1,4 @@
+# ignore changes in project folder, except project files themselves
+quakespasm/Windows/CodeBlocks/*
+!quakespasm/Windows/CodeBlocks/QuakeSpasm.cbp
+!quakespasm/Windows/CodeBlocks/QuakeSpasm-SDL2.cbp
