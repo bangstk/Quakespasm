@@ -787,8 +787,30 @@ void V_CalcRefdef (void)
 		view->origin[i] += forward[i]*bob*0.4;
 	view->origin[2] += bob;
 
-	//johnfitz -- removed all gun position fudging code (was used to keep gun from getting covered by sbar)
+	//restore and improve weapon offset code with status bar
+	//takes sbar scaling into account
+    float scale = CLAMP (1.0, scr_sbarscale.value, (float) glheight / 240.0);
+    scale /= (float) glheight / 240.0; //unit scale
 
+    scale = (scale / 2.0) + 0.5; //diminish effect of sbar scaling by half
+
+    float sbaroffset = 0;
+
+    if (scr_viewsize.value == 110) //no invbar
+        sbaroffset = scale * 1.0;
+    else if (scr_viewsize.value == 100) //full sbar
+        sbaroffset = scale * 2.0;
+    else if (scr_viewsize.value == 90)
+        sbaroffset = scale * 1.0;
+    else if (scr_viewsize.value == 80)
+        sbaroffset = scale * 0.5;
+
+    //make it look better with nonsolid huds
+    //anything above 2.0 offset could look cut off
+    if (scr_sbaralpha.value < 1)
+        sbaroffset = CLAMP(0.0, sbaroffset * 2.0, 2.0);
+
+    view->origin[2] += sbaroffset;
 	view->model = cl.model_precache[cl.stats[STAT_WEAPON]];
 	view->frame = cl.stats[STAT_WEAPONFRAME];
 	view->colormap = vid.colormap;
