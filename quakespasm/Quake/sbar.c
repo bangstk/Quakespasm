@@ -271,7 +271,11 @@ Sbar_DrawPic -- johnfitz -- rewritten now that GL_SetCanvas is doing the work
 */
 void Sbar_DrawPic (int x, int y, qpic_t *pic)
 {
+    glDisable (GL_ALPHA_TEST);
+	glEnable (GL_BLEND);
 	Draw_Pic (x, y + 24, pic);
+	glDisable (GL_BLEND);
+	glEnable (GL_ALPHA_TEST);
 }
 
 /*
@@ -297,7 +301,11 @@ Sbar_DrawCharacter -- johnfitz -- rewritten now that GL_SetCanvas is doing the w
 */
 void Sbar_DrawCharacter (int x, int y, int num)
 {
+    glDisable (GL_BLEND);
+	glEnable (GL_ALPHA_TEST);
 	Draw_Character (x, y + 24, num);
+	glDisable (GL_BLEND);
+	glEnable (GL_ALPHA_TEST);
 }
 
 /*
@@ -307,7 +315,11 @@ Sbar_DrawString -- johnfitz -- rewritten now that GL_SetCanvas is doing the work
 */
 void Sbar_DrawString (int x, int y, const char *str)
 {
+    glDisable (GL_BLEND);
+	glEnable (GL_ALPHA_TEST);
 	Draw_String (x, y + 24, str);
+	glDisable (GL_BLEND);
+	glEnable (GL_ALPHA_TEST);
 }
 
 /*
