@@ -792,12 +792,17 @@ void V_CalcRefdef (void)
     float scale = CLAMP (1.0, scr_sbarscale.value, (float) glheight / 240.0);
     scale /= (float) glheight / 240.0; //unit scale
 
-    scale = (scale / 2.0) + 0.5; //diminish effect of sbar scaling by half
+    //scale = (scale / 2.0) + 0.5; //diminish effect of sbar scaling by half
 
     float sbaroffset = 0;
 
     if (scr_viewsize.value == 110) //no invbar
-        sbaroffset = scale * 1.0;
+    {
+        if (cl_sbar.value == 1)
+            sbaroffset = scale * 1.0;
+        else
+            sbaroffset = scale * 2.0;
+    }
     else if (scr_viewsize.value == 100) //full sbar
         sbaroffset = scale * 2.0;
     else if (scr_viewsize.value == 90)
@@ -807,7 +812,7 @@ void V_CalcRefdef (void)
 
     //make it look better with nonsolid huds
     //anything above 2.0 offset could look cut off
-    if (scr_sbaralpha.value < 1)
+    if (scr_sbaralpha.value < 1 && cl_sbar.value == 1)
         sbaroffset = CLAMP(0.0, sbaroffset * 2.0, 2.0);
 
     view->origin[2] += sbaroffset;

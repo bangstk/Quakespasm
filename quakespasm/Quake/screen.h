@@ -63,6 +63,7 @@ typedef enum {
 	CANVAS_CONSOLE,
 	CANVAS_MENU,
 	CANVAS_SBAR,
+	CANVAS_IBAR_QW,
 	CANVAS_WARPIMAGE,
 	CANVAS_CROSSHAIR,
 	CANVAS_BOTTOMLEFT,
@@ -72,6 +73,7 @@ typedef enum {
 } canvastype;
 extern	cvar_t		scr_menuscale;
 extern	cvar_t		scr_sbarscale;
+extern  cvar_t      cl_sbar;
 extern	cvar_t		scr_conwidth;
 extern	cvar_t		scr_conscale;
 extern	cvar_t		scr_scale;

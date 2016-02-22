@@ -520,6 +520,41 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	glEnd ();
 }
 
+//for qw hud
+void Draw_SubPic (int x, int y, qpic_t *pic, int ofsx, int ofsy, int w, int h)
+{
+	glpic_t			*gl;
+	float nsl, ntl, nsh, nth;
+	float oldw, oldh;
+
+	if (scrap_dirty)
+		Scrap_Upload ();
+	gl = (glpic_t *)pic->data;
+	GL_Bind (gl->gltexture);
+
+    oldw = gl->sh - gl->sl;
+    oldh = gl->th - gl->tl;
+
+    nsl = gl->sl + (ofsx * oldw) / pic->width;
+    nsh = nsl + (w * oldw) / pic->width;
+
+    ntl = gl->tl + (ofsy * oldh) / pic->height;
+    nth = ntl + (h * oldh) / pic->height;
+
+    glBegin (GL_QUADS);
+
+    glTexCoord2f (nsl, ntl);
+    glVertex2f (x, y);
+    glTexCoord2f (nsh, ntl);
+    glVertex2f (x+w, y);
+    glTexCoord2f (nsh, nth);
+    glVertex2f (x+w, y+h);
+    glTexCoord2f (nsl, nth);
+    glVertex2f (x, y+h);
+
+    glEnd ();
+}
+
 /*
 =============
 Draw_TransPicTranslate -- johnfitz -- rewritten to use texmgr to do translation
@@ -719,6 +754,12 @@ void GL_SetCanvas (canvastype newcanvas)
 			glViewport (glx + (glwidth - 320*s) / 2, gly, 320*s, 48*s);
 		}
 		break;
+    case CANVAS_IBAR_QW: //split for cleaner QW hud support
+        s = CLAMP (1.0, scr_sbarscale.value, (float)glwidth / 320.0);
+
+        glOrtho (0, 44, 188, 0, -99999, 99999);
+        glViewport (glwidth - 44*s, 48*s, 44*s, 188*s);
+        break;
 	case CANVAS_WARPIMAGE:
 		glOrtho (0, 128, 0, 128, -99999, 99999);
 		glViewport (glx, gly+glheight-gl_warpimagesize, gl_warpimagesize, gl_warpimagesize);

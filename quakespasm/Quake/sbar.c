@@ -278,6 +278,18 @@ void Sbar_DrawPic (int x, int y, qpic_t *pic)
 	glEnable (GL_ALPHA_TEST);
 }
 
+//qw hud
+void Sbar_DrawSubPicAlpha (int x, int y, qpic_t *pic, int ofsx, int ofsy, int w, int h, float alpha)
+{
+    glDisable (GL_ALPHA_TEST);
+	glEnable (GL_BLEND);
+	glColor4f(1,1,1,alpha);
+	Draw_SubPic (x, y + 24, pic, ofsx, ofsy, w, h);
+	glColor4f(1,1,1,1); // ericw -- changed from glColor3f to work around intel 855 bug with "r_oldwater 0" and "scr_sbaralpha 0"
+	glDisable (GL_BLEND);
+	glEnable (GL_ALPHA_TEST);
+}
+
 /*
 =============
 Sbar_DrawPicAlpha -- johnfitz
@@ -301,11 +313,7 @@ Sbar_DrawCharacter -- johnfitz -- rewritten now that GL_SetCanvas is doing the w
 */
 void Sbar_DrawCharacter (int x, int y, int num)
 {
-    glDisable (GL_BLEND);
-	glEnable (GL_ALPHA_TEST);
 	Draw_Character (x, y + 24, num);
-	glDisable (GL_BLEND);
-	glEnable (GL_ALPHA_TEST);
 }
 
 /*
@@ -315,11 +323,7 @@ Sbar_DrawString -- johnfitz -- rewritten now that GL_SetCanvas is doing the work
 */
 void Sbar_DrawString (int x, int y, const char *str)
 {
-    glDisable (GL_BLEND);
-	glEnable (GL_ALPHA_TEST);
 	Draw_String (x, y + 24, str);
-	glDisable (GL_BLEND);
-	glEnable (GL_ALPHA_TEST);
 }
 
 /*
@@ -569,130 +573,199 @@ void Sbar_DrawInventory (void)
 	char	num[6];
 	float	time;
 	int	flashon;
+	int extraguns = 2 * hipnotic;
 
-	if (rogue)
-	{
-		if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
-			Sbar_DrawPicAlpha (0, -24, rsb_invbar[0], scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-		else
-			Sbar_DrawPicAlpha (0, -24, rsb_invbar[1], scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-	}
-	else
-	{
-		Sbar_DrawPicAlpha (0, -24, sb_ibar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-	}
+    if (cl_sbar.value == 0)
+        GL_SetCanvas(CANVAS_IBAR_QW);
 
-// weapons
-	for (i = 0; i < 7; i++)
-	{
-		if (cl.items & (IT_SHOTGUN<<i) )
-		{
-			time = cl.item_gettime[i];
-			flashon = (int)((cl.time - time)*10);
-			if (flashon >= 10)
-			{
-				if ( cl.stats[STAT_ACTIVEWEAPON] == (IT_SHOTGUN<<i)  )
-					flashon = 1;
-				else
-					flashon = 0;
-			}
-			else
-				flashon = (flashon%5) + 2;
+// ibar
+    if(scr_viewsize.value < 110)
+    {
+        if(cl_sbar.value == 1)
+        {
+            if (rogue)
+            {
+                if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
+                    Sbar_DrawPicAlpha (0, -24, rsb_invbar[0], scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+                else
+                    Sbar_DrawPicAlpha (0, -24, rsb_invbar[1], scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+            }
+            else
+            {
+                Sbar_DrawPicAlpha (0, -24, sb_ibar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+            }
+        }
+        else //for qw hud, ammo backgrounds
+        {
+            for (i = 0; i < 4; i++)
+            {
+                if (rogue)
+                {
+                    if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
+                        Sbar_DrawSubPicAlpha(0, 188 - 11*(4-i) - 24, rsb_invbar[0], 1 + (i*48), 0, 44, 11, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+                    else
+                        Sbar_DrawSubPicAlpha(0, 188 - 11*(4-i) - 24, rsb_invbar[1], 1 + (i*48), 0, 44, 11, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+                }
+                else
+                    Sbar_DrawSubPicAlpha(2, 188 - 11*(4-i) - 24, sb_ibar, 3 + (i*48), 0, 42, 11, scr_sbaralpha.value);
+            }
+        }
 
-			Sbar_DrawPic (i*24, -16, sb_weapons[flashon][i]);
+    // weapons
+        for (i = 0; i < 7; i++)
+        {
+            if (cl.items & (IT_SHOTGUN<<i) )
+            {
+                time = cl.item_gettime[i];
+                flashon = (int)((cl.time - time)*10);
+                if (flashon >= 10)
+                {
+                    if ( cl.stats[STAT_ACTIVEWEAPON] == (IT_SHOTGUN<<i)  )
+                        flashon = 1;
+                    else
+                        flashon = 0;
+                }
+                else
+                    flashon = (flashon%5) + 2;
 
-			if (flashon > 1)
-				sb_updates = 0;		// force update to remove flash
-		}
-	}
+                if (cl_sbar.value == 1)
+                    Sbar_DrawPic (i*24, -16, sb_weapons[flashon][i]);
+                else    //for qw hud
+                    Sbar_DrawPicAlpha (20, 32 + i*16 - (16 * extraguns) - 24, sb_weapons[flashon][i], scr_sbaralpha.value);
 
-// MED 01/04/97
-// hipnotic weapons
-	if (hipnotic)
-	{
-		int grenadeflashing = 0;
-		for (i = 0; i < 4; i++)
-		{
-			if (cl.items & (1<<hipweapons[i]))
-			{
-				time = cl.item_gettime[hipweapons[i]];
-				flashon = (int)((cl.time - time)*10);
-				if (flashon >= 10)
-				{
-					if (cl.stats[STAT_ACTIVEWEAPON] == (1<<hipweapons[i]))
-						flashon = 1;
-					else
-						flashon = 0;
-				}
-				else
-					flashon = (flashon%5) + 2;
+                if (flashon > 1)
+                    sb_updates = 0;		// force update to remove flash
+            }
+        }
 
-				// check grenade launcher
-				if (i == 2)
-				{
-					if (cl.items & HIT_PROXIMITY_GUN)
-					{
-						if (flashon)
-						{
-							grenadeflashing = 1;
-							Sbar_DrawPic (96, -16, hsb_weapons[flashon][2]);
-						}
-					}
-				}
-				else if (i == 3)
-				{
-					if (cl.items & (IT_SHOTGUN<<4))
-					{
-						if (flashon && !grenadeflashing)
-						{
-							Sbar_DrawPic (96, -16, hsb_weapons[flashon][3]);
-						}
-						else if (!grenadeflashing)
-						{
-							Sbar_DrawPic (96, -16, hsb_weapons[0][3]);
-						}
-					}
-					else
-						Sbar_DrawPic (96, -16, hsb_weapons[flashon][4]);
-				}
-				else
-					Sbar_DrawPic (176 + (i*24), -16, hsb_weapons[flashon][i]);
+    // MED 01/04/97
+    // hipnotic weapons
+        if (hipnotic)
+        {
+            int grenadeflashing = 0;
+            for (i = 0; i < 4; i++)
+            {
+                if (cl.items & (1<<hipweapons[i]))
+                {
+                    time = cl.item_gettime[hipweapons[i]];
+                    flashon = (int)((cl.time - time)*10);
+                    if (flashon >= 10)
+                    {
+                        if (cl.stats[STAT_ACTIVEWEAPON] == (1<<hipweapons[i]))
+                            flashon = 1;
+                        else
+                            flashon = 0;
+                    }
+                    else
+                        flashon = (flashon%5) + 2;
 
-				if (flashon > 1)
-					sb_updates = 0;	// force update to remove flash
-			}
-		}
-	}
+                    // check grenade launcher
+                    if (i == 2)
+                    {
+                        if (cl.items & HIT_PROXIMITY_GUN)
+                        {
+                            if (flashon)
+                            {
+                                grenadeflashing = 1;
+                                if (cl_sbar.value == 1)
+                                    Sbar_DrawPic (96, -16, hsb_weapons[flashon][2]);
+                                else    //for qw hud
+                                    Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][2], scr_sbaralpha.value);
+                            }
+                        }
+                    }
+                    else if (i == 3)
+                    {
+                        if (cl.items & (IT_SHOTGUN<<4))
+                        {
+                            if (flashon && !grenadeflashing)
+                            {
+                                if (cl_sbar.value == 1)
+                                    Sbar_DrawPic (96, -16, hsb_weapons[flashon][3]);
+                                else    //for qw hud
+                                    Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][3], scr_sbaralpha.value);
+                            }
+                            else if (!grenadeflashing)
+                            {
+                                if (cl_sbar.value == 1)
+                                    Sbar_DrawPic (96, -16, hsb_weapons[0][3]);
+                                else    //for qw hud
+                                    Sbar_DrawPicAlpha (20, 40, hsb_weapons[0][3], scr_sbaralpha.value);
+                            }
+                        }
+                        else
+                        {
+                            if (cl_sbar.value == 1)
+                                Sbar_DrawPic (96, -16, hsb_weapons[flashon][4]);
+                            else    //for qw hud
+                                Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][4], scr_sbaralpha.value);
+                        }
 
-	if (rogue)
-	{
-    // check for powered up weapon.
-		if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
-		{
-			for (i=0;i<5;i++)
-			{
-				if (cl.stats[STAT_ACTIVEWEAPON] == (RIT_LAVA_NAILGUN << i))
-				{
-					Sbar_DrawPic ((i+2)*24, -16, rsb_weapons[i]);
-				}
-			}
-		}
-	}
+                    }
+                    else
+                    {
+                        if (cl_sbar.value == 1)
+                            Sbar_DrawPic (176 + (i*24), -16, hsb_weapons[flashon][i]);
+                        else    //for qw hud
+                            Sbar_DrawPicAlpha (20, (i+7)*16 - 24, hsb_weapons[flashon][i], scr_sbaralpha.value);
+                    }
 
-// ammo counts
-	for (i = 0; i < 4; i++)
-	{
-		sprintf (num, "%3i", q_min(999,cl.stats[STAT_SHELLS+i])); //johnfitz -- cap displayed value to 999
-		if (num[0] != ' ')
-			Sbar_DrawCharacter ( (6*i+1)*8 + 2, -24, 18 + num[0] - '0');
-		if (num[1] != ' ')
-			Sbar_DrawCharacter ( (6*i+2)*8 + 2, -24, 18 + num[1] - '0');
-		if (num[2] != ' ')
-			Sbar_DrawCharacter ( (6*i+3)*8 + 2, -24, 18 + num[2] - '0');
-	}
 
-	flashon = 0;
+                    if (flashon > 1)
+                        sb_updates = 0;	// force update to remove flash
+                }
+            }
+        }
+
+        if (rogue)
+        {
+        // check for powered up weapon.
+            if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
+            {
+                for (i=0;i<5;i++)
+                {
+                    if (cl.stats[STAT_ACTIVEWEAPON] == (RIT_LAVA_NAILGUN << i))
+                    {
+                        if (cl_sbar.value == 1)
+                            Sbar_DrawPic ((i+2)*24, -16, rsb_weapons[i]);
+                        else    //for qw hud
+                            Sbar_DrawPicAlpha (20, (i+2)*16 - 24 + 32, rsb_weapons[i], scr_sbaralpha.value);
+                    }
+                }
+            }
+        }
+
+    // ammo counts
+        for (i = 0; i < 4; i++)
+        {
+            sprintf (num, "%3i", q_min(999,cl.stats[STAT_SHELLS+i])); //johnfitz -- cap displayed value to 999
+
+            if (cl_sbar.value == 1)
+            {
+                if (num[0] != ' ')
+                    Sbar_DrawCharacter ( (6*i+1)*8 + 2, -24, 18 + num[0] - '0');
+                if (num[1] != ' ')
+                    Sbar_DrawCharacter ( (6*i+2)*8 + 2, -24, 18 + num[1] - '0');
+                if (num[2] != ' ')
+                    Sbar_DrawCharacter ( (6*i+3)*8 + 2, -24, 18 + num[2] - '0');
+            }
+            else //for qw hud
+            {
+                if (num[0] != ' ')
+                    Sbar_DrawCharacter ( 9, 188 - 11*(4-i) - 24, 18 + num[0] - '0');
+                if (num[1] != ' ')
+                    Sbar_DrawCharacter ( 17, 188 - 11*(4-i) - 24, 18 + num[1] - '0');
+                if (num[2] != ' ')
+                    Sbar_DrawCharacter ( 25, 188 - 11*(4-i) - 24, 18 + num[2] - '0');
+            }
+        }
+
+        flashon = 0;
+    }
 	// items
+
+	GL_SetCanvas(CANVAS_SBAR);
+
 	for (i = 0; i < 6; i++)
 	{
 		if (cl.items & (1<<(17+i)))
@@ -984,7 +1057,10 @@ void Sbar_Draw (void)
 	}
 	else if (scr_viewsize.value < 120) //johnfitz -- check viewsize instead of sb_lines
 	{
-		Sbar_DrawPicAlpha (0, 0, sb_sbar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+	    if (cl_sbar.value == 1)
+            Sbar_DrawPicAlpha (0, 0, sb_sbar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+        else //for QW, draw keys/powerups anyways
+            Sbar_DrawInventory ();
 
    // keys (hipnotic only)
 		//MED 01/04/97 moved keys here so they would not be overwritten
