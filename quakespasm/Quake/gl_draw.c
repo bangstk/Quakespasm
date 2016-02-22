@@ -735,6 +735,11 @@ void GL_SetCanvas (canvastype newcanvas)
 		glOrtho (0, vid.conwidth, vid.conheight + lines, lines, -99999, 99999);
 		glViewport (glx, gly, glwidth, glheight);
 		break;
+    case CANVAS_CENTERPRINT: //centerprint gets its own canvas for proper offset
+        s = CLAMP (1.0, scr_conscale.value, (float)glwidth / 320.0);
+		glOrtho (0, 320, glheight/s, 0, -99999, 99999);
+		glViewport (glx + (glwidth - 320*s) / 2, gly, 320*s, glheight);
+		break;
 	case CANVAS_MENU:
 		s = q_min((float)glwidth / 640.0, (float)glheight / 200.0); // ericw -- doubled width to 640 to accommodate long keybindings
 		s = CLAMP (1.0, scr_menuscale.value, s);

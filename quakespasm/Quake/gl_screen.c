@@ -169,23 +169,29 @@ void SCR_DrawCenterString (void) //actually do the drawing
 	int		x, y;
 	int		remaining;
 
-	GL_SetCanvas (CANVAS_MENU); //johnfitz
-
 // the finale prints the characters one at a time
-	if (cl.intermission)
-		remaining = scr_printspeed.value * (cl.time - scr_centertime_start);
-	else
-		remaining = 9999;
 
 	scr_erase_center = 0;
 	start = scr_centerstring;
 
-	if (scr_center_lines <= 4)
-		y = 200*0.35;	//johnfitz -- 320x200 coordinate system
-	else
-		y = 48;
-	if (crosshair.value)
-		y -= 8;
+	float s = CLAMP (1.0, scr_conscale.value, glwidth / 320.0);
+
+	if (cl.intermission) //we're using the regular menu canvas for this so I don't have to keep it centered otherwise
+    {
+        GL_SetCanvas (CANVAS_MENU);
+        remaining = scr_printspeed.value * (cl.time - scr_centertime_start);
+        y = 48;
+    }
+
+	else //it's a normal centerprint
+    {
+        GL_SetCanvas (CANVAS_CENTERPRINT); //johnfitz
+        remaining = 9999;
+
+        y = (int)(glheight/s)*.35 - scr_center_lines * 8; //keep it off the xhair at max sbar size
+        if (y < 32) //unless it would go offscreen
+            y = 32;
+    }
 
 	do
 	{
