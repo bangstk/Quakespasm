@@ -1,10 +1,10 @@
 # Quakespasm
 My branch of Quakespasm with a few quality-of-life features and changes.
 
-+ QuakeWorld hud option (controlled though "cl_sbar" cvar) including expansion support
-+ Re-enable weapon viewmodel vertical offset with status bar enabled 
++ [QuakeWorld hud option (controlled though "cl_sbar" cvar) including expansion support](http://i.imgur.com/IucSPLL.png)
++ [Re-enable weapon viewmodel vertical offset with status bar enabled](http://i.imgur.com/kJpRDqb.png)
     - also adjusts with status bar scale
-+ Scoot centerprint messages up off the crosshair
++ [Scoot centerprint messages up off the crosshair](http://i.imgur.com/PofcgdD.png)
 + Recalculate refdef on sbar scale change
 
 
