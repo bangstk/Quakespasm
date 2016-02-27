@@ -812,8 +812,13 @@ void V_CalcRefdef (void)
 
     //make it look better with nonsolid huds
     //anything above 2.0 offset could look cut off
-    if (scr_sbaralpha.value < 1 && cl_sbar.value == 1)
-        sbaroffset = CLAMP(0.0, sbaroffset * 2.0, 2.0);
+    if(cl_sbar.value == 1)
+    {
+        if (scr_sbaralpha.value < 1)
+            sbaroffset = CLAMP(0.0, sbaroffset * 2.0, 2.0);
+        else //diminish effect of sbar scaling if solid sbar
+            sbaroffset = (sbaroffset / 2.0) + 1.0;
+    }
 
     view->origin[2] += sbaroffset;
 	view->model = cl.model_precache[cl.stats[STAT_WEAPON]];
