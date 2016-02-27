@@ -760,7 +760,8 @@ void GL_SetCanvas (canvastype newcanvas)
 		}
 		else
 			s = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
-		if (cl.gametype == GAME_DEATHMATCH)
+        //there's no reason to move sbar over if the mini dm scoreboard wont fit
+		if (cl.gametype == GAME_DEATHMATCH && glwidth/s >= 512)
 		{
 			glOrtho (0, glwidth / s, 48, 0, -99999, 99999);
 			glViewport (glx, gly, glwidth, 48*s);

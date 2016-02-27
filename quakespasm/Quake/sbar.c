@@ -1016,6 +1016,7 @@ Sbar_Draw
 */
 void Sbar_Draw (void)
 {
+	float scale;
 	float w; //johnfitz
 
 	if (scr_con_current == vid.height)
@@ -1035,20 +1036,20 @@ void Sbar_Draw (void)
 	//johnfitz -- don't waste fillrate by clearing the area behind the sbar
 	if (!scr_sbarscale.value)
 	{
-		w = glheight / 240.0;
+		scale = glheight / 240.0;
 		if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
-			w = floorf(w);
+			scale = floorf(scale);
 	}
 	else
-		w = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+		scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
-	w *= 240.0f;
+	w = scale * 320.0f;
 
 	if (sb_lines && glwidth > w)
 	{
 		if (scr_sbaralpha.value < 1)
 			Draw_TileClear (0, glheight - sb_lines, glwidth, sb_lines);
-		if (cl.gametype == GAME_DEATHMATCH)
+		if (cl.gametype == GAME_DEATHMATCH && glwidth/scale >= 512)
 			Draw_TileClear (w, glheight - sb_lines, glwidth - w, sb_lines);
 		else
 		{
