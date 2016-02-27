@@ -271,7 +271,7 @@ Sbar_DrawPic -- johnfitz -- rewritten now that GL_SetCanvas is doing the work
 */
 void Sbar_DrawPic (int x, int y, qpic_t *pic)
 {
-    glDisable (GL_ALPHA_TEST);
+	glDisable (GL_ALPHA_TEST);
 	glEnable (GL_BLEND);
 	Draw_Pic (x, y + 24, pic);
 	glDisable (GL_BLEND);
@@ -281,7 +281,7 @@ void Sbar_DrawPic (int x, int y, qpic_t *pic)
 //qw hud
 void Sbar_DrawSubPicAlpha (int x, int y, qpic_t *pic, int ofsx, int ofsy, int w, int h, float alpha)
 {
-    glDisable (GL_ALPHA_TEST);
+	glDisable (GL_ALPHA_TEST);
 	glEnable (GL_BLEND);
 	glColor4f(1,1,1,alpha);
 	Draw_SubPic (x, y + 24, pic, ofsx, ofsy, w, h);
@@ -339,13 +339,13 @@ void Sbar_DrawScrollString (int x, int y, int width, const char *str)
 	int len, ofs, left;
 
 	if (!scr_sbarscale.value)
-    {
-        scale = glheight / 240.0;
-        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
-            scale = floorf(scale);
-    }
-    else
-        scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+	{
+		scale = glheight / 240.0;
+		if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+			scale = floorf(scale);
+	}
+	else
+		scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
 	left = x * scale;
 	if (cl.gametype != GAME_DEATHMATCH)
@@ -583,193 +583,193 @@ void Sbar_DrawInventory (void)
 	int	flashon;
 	int extraguns = 2 * hipnotic;
 
-    if (cl_sbar.value == 0)
-        GL_SetCanvas(CANVAS_IBAR_QW);
+	if (cl_sbar.value == 0)
+		GL_SetCanvas(CANVAS_IBAR_QW);
 
 // ibar
-    if(scr_viewsize.value < 110)
-    {
-        if(cl_sbar.value == 1)
-        {
-            if (rogue)
-            {
-                if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
-                    Sbar_DrawPicAlpha (0, -24, rsb_invbar[0], scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-                else
-                    Sbar_DrawPicAlpha (0, -24, rsb_invbar[1], scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-            }
-            else
-            {
-                Sbar_DrawPicAlpha (0, -24, sb_ibar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-            }
-        }
-        else //for qw hud, ammo backgrounds
-        {
-            for (i = 0; i < 4; i++)
-            {
-                if (rogue)
-                {
-                    if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
-                        Sbar_DrawSubPicAlpha(0, 188 - 11*(4-i) - 24, rsb_invbar[0], 1 + (i*48), 0, 44, 11, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-                    else
-                        Sbar_DrawSubPicAlpha(0, 188 - 11*(4-i) - 24, rsb_invbar[1], 1 + (i*48), 0, 44, 11, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-                }
-                else
-                    Sbar_DrawSubPicAlpha(2, 188 - 11*(4-i) - 24, sb_ibar, 3 + (i*48), 0, 42, 11, scr_sbaralpha.value);
-            }
-        }
+	if(scr_viewsize.value < 110)
+	{
+		if(cl_sbar.value == 1)
+		{
+			if (rogue)
+			{
+				if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
+					Sbar_DrawPicAlpha (0, -24, rsb_invbar[0], scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+				else
+					Sbar_DrawPicAlpha (0, -24, rsb_invbar[1], scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+			}
+			else
+			{
+				Sbar_DrawPicAlpha (0, -24, sb_ibar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+			}
+		}
+		else //for qw hud, ammo backgrounds
+		{
+			for (i = 0; i < 4; i++)
+			{
+				if (rogue)
+				{
+					if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
+						Sbar_DrawSubPicAlpha(0, 188 - 11*(4-i) - 24, rsb_invbar[0], 1 + (i*48), 0, 44, 11, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+					else
+						Sbar_DrawSubPicAlpha(0, 188 - 11*(4-i) - 24, rsb_invbar[1], 1 + (i*48), 0, 44, 11, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+				}
+				else
+					Sbar_DrawSubPicAlpha(2, 188 - 11*(4-i) - 24, sb_ibar, 3 + (i*48), 0, 42, 11, scr_sbaralpha.value);
+			}
+		}
 
-    // weapons
-        for (i = 0; i < 7; i++)
-        {
-            if (cl.items & (IT_SHOTGUN<<i) )
-            {
-                time = cl.item_gettime[i];
-                flashon = (int)((cl.time - time)*10);
-                if (flashon >= 10)
-                {
-                    if ( cl.stats[STAT_ACTIVEWEAPON] == (IT_SHOTGUN<<i)  )
-                        flashon = 1;
-                    else
-                        flashon = 0;
-                }
-                else
-                    flashon = (flashon%5) + 2;
+	// weapons
+		for (i = 0; i < 7; i++)
+		{
+			if (cl.items & (IT_SHOTGUN<<i) )
+			{
+				time = cl.item_gettime[i];
+				flashon = (int)((cl.time - time)*10);
+				if (flashon >= 10)
+				{
+					if ( cl.stats[STAT_ACTIVEWEAPON] == (IT_SHOTGUN<<i)  )
+						flashon = 1;
+					else
+						flashon = 0;
+				}
+				else
+					flashon = (flashon%5) + 2;
 
-                if (cl_sbar.value == 1)
-                    Sbar_DrawPic (i*24, -16, sb_weapons[flashon][i]);
-                else    //for qw hud
-                    Sbar_DrawPicAlpha (20, 32 + i*16 - (16 * extraguns) - 24, sb_weapons[flashon][i], scr_sbaralpha.value);
+				if (cl_sbar.value == 1)
+					Sbar_DrawPic (i*24, -16, sb_weapons[flashon][i]);
+				else    //for qw hud
+					Sbar_DrawPicAlpha (20, 32 + i*16 - (16 * extraguns) - 24, sb_weapons[flashon][i], scr_sbaralpha.value);
 
-                if (flashon > 1)
-                    sb_updates = 0;		// force update to remove flash
-            }
-        }
+				if (flashon > 1)
+					sb_updates = 0;		// force update to remove flash
+			}
+		}
 
-    // MED 01/04/97
-    // hipnotic weapons
-        if (hipnotic)
-        {
-            int grenadeflashing = 0;
-            for (i = 0; i < 4; i++)
-            {
-                if (cl.items & (1<<hipweapons[i]))
-                {
-                    time = cl.item_gettime[hipweapons[i]];
-                    flashon = (int)((cl.time - time)*10);
-                    if (flashon >= 10)
-                    {
-                        if (cl.stats[STAT_ACTIVEWEAPON] == (1<<hipweapons[i]))
-                            flashon = 1;
-                        else
-                            flashon = 0;
-                    }
-                    else
-                        flashon = (flashon%5) + 2;
+	// MED 01/04/97
+	// hipnotic weapons
+		if (hipnotic)
+		{
+			int grenadeflashing = 0;
+			for (i = 0; i < 4; i++)
+			{
+				if (cl.items & (1<<hipweapons[i]))
+				{
+					time = cl.item_gettime[hipweapons[i]];
+					flashon = (int)((cl.time - time)*10);
+					if (flashon >= 10)
+					{
+						if (cl.stats[STAT_ACTIVEWEAPON] == (1<<hipweapons[i]))
+							flashon = 1;
+						else
+							flashon = 0;
+					}
+					else
+						flashon = (flashon%5) + 2;
 
-                    // check grenade launcher
-                    if (i == 2)
-                    {
-                        if (cl.items & HIT_PROXIMITY_GUN)
-                        {
-                            if (flashon)
-                            {
-                                grenadeflashing = 1;
-                                if (cl_sbar.value == 1)
-                                    Sbar_DrawPic (96, -16, hsb_weapons[flashon][2]);
-                                else    //for qw hud
-                                    Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][2], scr_sbaralpha.value);
-                            }
-                        }
-                    }
-                    else if (i == 3)
-                    {
-                        if (cl.items & (IT_SHOTGUN<<4))
-                        {
-                            if (flashon && !grenadeflashing)
-                            {
-                                if (cl_sbar.value == 1)
-                                    Sbar_DrawPic (96, -16, hsb_weapons[flashon][3]);
-                                else    //for qw hud
-                                    Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][3], scr_sbaralpha.value);
-                            }
-                            else if (!grenadeflashing)
-                            {
-                                if (cl_sbar.value == 1)
-                                    Sbar_DrawPic (96, -16, hsb_weapons[0][3]);
-                                else    //for qw hud
-                                    Sbar_DrawPicAlpha (20, 40, hsb_weapons[0][3], scr_sbaralpha.value);
-                            }
-                        }
-                        else
-                        {
-                            if (cl_sbar.value == 1)
-                                Sbar_DrawPic (96, -16, hsb_weapons[flashon][4]);
-                            else    //for qw hud
-                                Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][4], scr_sbaralpha.value);
-                        }
+					// check grenade launcher
+					if (i == 2)
+					{
+						if (cl.items & HIT_PROXIMITY_GUN)
+						{
+							if (flashon)
+							{
+								grenadeflashing = 1;
+								if (cl_sbar.value == 1)
+									Sbar_DrawPic (96, -16, hsb_weapons[flashon][2]);
+								else    //for qw hud
+									Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][2], scr_sbaralpha.value);
+							}
+						}
+					}
+					else if (i == 3)
+					{
+						if (cl.items & (IT_SHOTGUN<<4))
+						{
+							if (flashon && !grenadeflashing)
+							{
+								if (cl_sbar.value == 1)
+									Sbar_DrawPic (96, -16, hsb_weapons[flashon][3]);
+								else    //for qw hud
+									Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][3], scr_sbaralpha.value);
+							}
+							else if (!grenadeflashing)
+							{
+								if (cl_sbar.value == 1)
+									Sbar_DrawPic (96, -16, hsb_weapons[0][3]);
+								else    //for qw hud
+									Sbar_DrawPicAlpha (20, 40, hsb_weapons[0][3], scr_sbaralpha.value);
+							}
+						}
+						else
+						{
+							if (cl_sbar.value == 1)
+								Sbar_DrawPic (96, -16, hsb_weapons[flashon][4]);
+							else    //for qw hud
+								Sbar_DrawPicAlpha (20, 40, hsb_weapons[flashon][4], scr_sbaralpha.value);
+						}
 
-                    }
-                    else
-                    {
-                        if (cl_sbar.value == 1)
-                            Sbar_DrawPic (176 + (i*24), -16, hsb_weapons[flashon][i]);
-                        else    //for qw hud
-                            Sbar_DrawPicAlpha (20, (i+7)*16 - 24, hsb_weapons[flashon][i], scr_sbaralpha.value);
-                    }
+					}
+					else
+					{
+						if (cl_sbar.value == 1)
+							Sbar_DrawPic (176 + (i*24), -16, hsb_weapons[flashon][i]);
+						else    //for qw hud
+							Sbar_DrawPicAlpha (20, (i+7)*16 - 24, hsb_weapons[flashon][i], scr_sbaralpha.value);
+					}
 
 
-                    if (flashon > 1)
-                        sb_updates = 0;	// force update to remove flash
-                }
-            }
-        }
+					if (flashon > 1)
+						sb_updates = 0;	// force update to remove flash
+				}
+			}
+		}
 
-        if (rogue)
-        {
-        // check for powered up weapon.
-            if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
-            {
-                for (i=0;i<5;i++)
-                {
-                    if (cl.stats[STAT_ACTIVEWEAPON] == (RIT_LAVA_NAILGUN << i))
-                    {
-                        if (cl_sbar.value == 1)
-                            Sbar_DrawPic ((i+2)*24, -16, rsb_weapons[i]);
-                        else    //for qw hud
-                            Sbar_DrawPicAlpha (20, (i+2)*16 - 24 + 32, rsb_weapons[i], scr_sbaralpha.value);
-                    }
-                }
-            }
-        }
+		if (rogue)
+		{
+		// check for powered up weapon.
+			if ( cl.stats[STAT_ACTIVEWEAPON] >= RIT_LAVA_NAILGUN )
+			{
+				for (i=0;i<5;i++)
+				{
+					if (cl.stats[STAT_ACTIVEWEAPON] == (RIT_LAVA_NAILGUN << i))
+					{
+						if (cl_sbar.value == 1)
+							Sbar_DrawPic ((i+2)*24, -16, rsb_weapons[i]);
+						else    //for qw hud
+							Sbar_DrawPicAlpha (20, (i+2)*16 - 24 + 32, rsb_weapons[i], scr_sbaralpha.value);
+					}
+				}
+			}
+		}
 
-    // ammo counts
-        for (i = 0; i < 4; i++)
-        {
-            sprintf (num, "%3i", q_min(999,cl.stats[STAT_SHELLS+i])); //johnfitz -- cap displayed value to 999
+	// ammo counts
+		for (i = 0; i < 4; i++)
+		{
+			sprintf (num, "%3i", q_min(999,cl.stats[STAT_SHELLS+i])); //johnfitz -- cap displayed value to 999
 
-            if (cl_sbar.value == 1)
-            {
-                if (num[0] != ' ')
-                    Sbar_DrawCharacter ( (6*i+1)*8 + 2, -24, 18 + num[0] - '0');
-                if (num[1] != ' ')
-                    Sbar_DrawCharacter ( (6*i+2)*8 + 2, -24, 18 + num[1] - '0');
-                if (num[2] != ' ')
-                    Sbar_DrawCharacter ( (6*i+3)*8 + 2, -24, 18 + num[2] - '0');
-            }
-            else //for qw hud
-            {
-                if (num[0] != ' ')
-                    Sbar_DrawCharacter ( 9, 188 - 11*(4-i) - 24, 18 + num[0] - '0');
-                if (num[1] != ' ')
-                    Sbar_DrawCharacter ( 17, 188 - 11*(4-i) - 24, 18 + num[1] - '0');
-                if (num[2] != ' ')
-                    Sbar_DrawCharacter ( 25, 188 - 11*(4-i) - 24, 18 + num[2] - '0');
-            }
-        }
+			if (cl_sbar.value == 1)
+			{
+				if (num[0] != ' ')
+					Sbar_DrawCharacter ( (6*i+1)*8 + 2, -24, 18 + num[0] - '0');
+				if (num[1] != ' ')
+					Sbar_DrawCharacter ( (6*i+2)*8 + 2, -24, 18 + num[1] - '0');
+				if (num[2] != ' ')
+					Sbar_DrawCharacter ( (6*i+3)*8 + 2, -24, 18 + num[2] - '0');
+			}
+			else //for qw hud
+			{
+				if (num[0] != ' ')
+					Sbar_DrawCharacter ( 9, 188 - 11*(4-i) - 24, 18 + num[0] - '0');
+				if (num[1] != ' ')
+					Sbar_DrawCharacter ( 17, 188 - 11*(4-i) - 24, 18 + num[1] - '0');
+				if (num[2] != ' ')
+					Sbar_DrawCharacter ( 25, 188 - 11*(4-i) - 24, 18 + num[2] - '0');
+			}
+		}
 
-        flashon = 0;
-    }
+		flashon = 0;
+	}
 	// items
 
 	GL_SetCanvas(CANVAS_SBAR);
@@ -1025,7 +1025,7 @@ void Sbar_Draw (void)
 		return; //johnfitz -- never draw sbar during intermission
 
 	if (sb_updates >= vid.numpages && !gl_clear.value && scr_sbaralpha.value >= 1 //johnfitz -- gl_clear, scr_sbaralpha
-        && !(gl_glsl_gamma_able && vid_gamma.value != 1))                         //ericw -- must draw sbar every frame if doing glsl gamma
+		&& !(gl_glsl_gamma_able && vid_gamma.value != 1))                         //ericw -- must draw sbar every frame if doing glsl gamma
 		return;
 
 	sb_updates++;
@@ -1034,15 +1034,15 @@ void Sbar_Draw (void)
 
 	//johnfitz -- don't waste fillrate by clearing the area behind the sbar
 	if (!scr_sbarscale.value)
-    {
-        w = glheight / 240.0;
-        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
-            w = floorf(w);
-    }
-    else
-        w = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+	{
+		w = glheight / 240.0;
+		if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+			w = floorf(w);
+	}
+	else
+		w = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
-    w *= 240.0f;
+	w *= 240.0f;
 
 	if (sb_lines && glwidth > w)
 	{
@@ -1062,7 +1062,7 @@ void Sbar_Draw (void)
 
 	if (scr_viewsize.value < 110 || (scr_viewsize.value < 120 && !cl_sbar.value) )
 	{
-        Sbar_DrawInventory ();
+		Sbar_DrawInventory ();
 		if (cl.maxclients != 1)
 			Sbar_DrawFrags ();
 	}
@@ -1076,7 +1076,7 @@ void Sbar_Draw (void)
 	else if (scr_viewsize.value < 120) //johnfitz -- check viewsize instead of sb_lines
 	{
 	    if (cl_sbar.value == 1)
-            Sbar_DrawPicAlpha (0, 0, sb_sbar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
+			Sbar_DrawPicAlpha (0, 0, sb_sbar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
 
    // keys (hipnotic only)
 		//MED 01/04/97 moved keys here so they would not be overwritten
@@ -1294,13 +1294,13 @@ void Sbar_MiniDeathmatchOverlay (void)
 	scoreboard_t	*s;
 
 	if (!scr_sbarscale.value)
-    {
-        scale = glheight / 240.0;
-        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
-            scale = floorf(scale);
-    }
-    else
-        scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+	{
+		scale = glheight / 240.0;
+		if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+			scale = floorf(scale);
+	}
+	else
+		scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
 	//MAX_SCOREBOARDNAME = 32, so total width for this overlay plus sbar is 632, but we can cut off some i guess
 	if (glwidth/scale < 512 || scr_viewsize.value >= 120) //johnfitz -- test should consider scr_sbarscale

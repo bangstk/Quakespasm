@@ -176,26 +176,26 @@ void SCR_DrawCenterString (void) //actually do the drawing
 	start = scr_centerstring;
 
 	if (!scr_conscale.value) //autoscale if 0 - make a bit smaller than if 320x240
-        s = floorf(vid.height / 300.0);
-    else
-        s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
+		s = floorf(vid.height / 300.0);
+	else
+		s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
 
 	if (cl.intermission) //we're using the regular menu canvas for this so I don't have to keep it centered otherwise
-    {
-        GL_SetCanvas (CANVAS_MENU);
-        remaining = scr_printspeed.value * (cl.time - scr_centertime_start);
-        y = 48;
-    }
+	{
+		GL_SetCanvas (CANVAS_MENU);
+		remaining = scr_printspeed.value * (cl.time - scr_centertime_start);
+		y = 48;
+	}
 
 	else //it's a normal centerprint
-    {
-        GL_SetCanvas (CANVAS_CENTERPRINT); //johnfitz
-        remaining = 9999;
+	{
+		GL_SetCanvas (CANVAS_CENTERPRINT); //johnfitz
+		remaining = 9999;
 
-        y = (int)(glheight/s)*.35 - scr_center_lines * 8; //keep it off the xhair at max sbar size
-        if (y < 32) //unless it would go offscreen
-            y = 32;
-    }
+		y = (int)(glheight/s)*.35 - scr_center_lines * 8; //keep it off the xhair at max sbar size
+		if (y < 32) //unless it would go offscreen
+			y = 32;
+	}
 
 	do
 	{
@@ -317,13 +317,13 @@ static void SCR_CalcRefdef (void)
 	size = scr_viewsize.value;
 
 	if (!scr_sbarscale.value)
-    {
-        scale = glheight / 240.0;
-        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
-            scale = floorf(scale);
-    }
-    else
-        scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+	{
+		scale = glheight / 240.0;
+		if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+			scale = floorf(scale);
+	}
+	else
+		scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
 	if (size >= 120 || cl.intermission || scr_sbaralpha.value < 1 || cl_sbar.value < 1) //johnfitz -- scr_sbaralpha.value
 		sb_lines = 0;
@@ -388,18 +388,18 @@ void SCR_Conwidth_f (cvar_t *var)
 {
 	vid.recalc_refdef = 1;
 	if (scr_conwidth.value > 0)
-        vid.conwidth = (int)scr_conwidth.value;
-    else
-    {
-        float s;
+		vid.conwidth = (int)scr_conwidth.value;
+	else
+	{
+		float s;
 
-        if (!scr_conscale.value) //autoscale if 0
-            s = floorf(vid.height / 300.0);
-        else
-            s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
+		if (!scr_conscale.value) //autoscale if 0
+			s = floorf(vid.height / 300.0);
+		else
+			s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
 
-        vid.conwidth = (vid.width / s);
-    }
+		vid.conwidth = (vid.width / s);
+	}
 
 	//vid.conwidth = (scr_conwidth.value > 0) ? (int)scr_conwidth.value : (scr_conscale.value > 0) ? (int)(vid.width/scr_conscale.value) : vid.width;
 	vid.conwidth = CLAMP (320, vid.conwidth, vid.width);

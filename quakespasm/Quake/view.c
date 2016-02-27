@@ -524,10 +524,10 @@ void V_PolyBlend (void)
 	glEnable (GL_BLEND);
 
 	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity ();
+	glLoadIdentity ();
 	glOrtho (0, 1, 1, 0, -99999, 99999);
 	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity ();
+	glLoadIdentity ();
 
 	glColor4fv (v_blend);
 
@@ -792,43 +792,43 @@ void V_CalcRefdef (void)
 	float scale;
 
 	if (!scr_sbarscale.value)
-    {
-        scale = glheight / 240.0;
-        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
-            scale = floorf(scale);
-    }
-    else
-        scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+	{
+		scale = glheight / 240.0;
+		if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+			scale = floorf(scale);
+	}
+	else
+		scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
-    scale /= (float) glheight / 240.0; //unit scale
+	scale /= (float) glheight / 240.0; //unit scale
 
-    float sbaroffset = 0;
+	float sbaroffset = 0;
 
-    if (scr_viewsize.value == 110) //no invbar
-    {
-        if (cl_sbar.value == 1)
-            sbaroffset = scale * 1.0;
-        else
-            sbaroffset = scale * 2.0;
-    }
-    else if (scr_viewsize.value == 100) //full sbar
-        sbaroffset = scale * 2.0;
-    else if (scr_viewsize.value == 90)
-        sbaroffset = scale * 1.0;
-    else if (scr_viewsize.value == 80)
-        sbaroffset = scale * 0.5;
+	if (scr_viewsize.value == 110) //no invbar
+	{
+		if (cl_sbar.value == 1)
+			sbaroffset = scale * 1.0;
+		else
+			sbaroffset = scale * 2.0;
+	}
+	else if (scr_viewsize.value == 100) //full sbar
+		sbaroffset = scale * 2.0;
+	else if (scr_viewsize.value == 90)
+		sbaroffset = scale * 1.0;
+	else if (scr_viewsize.value == 80)
+		sbaroffset = scale * 0.5;
 
-    //make it look better with nonsolid huds
-    //anything above 2.0 offset could look cut off
-    if(cl_sbar.value == 1)
-    {
-        if (scr_sbaralpha.value < 1 && cl_sbar.value == 1)
-            sbaroffset = CLAMP(0.0, sbaroffset * 2.0, 2.0);
-    }
-    if (sbaroffset)
-        sbaroffset = (sbaroffset / 2.0) + 1.0;
+	//make it look better with nonsolid huds
+	//anything above 2.0 offset could look cut off
+	if(cl_sbar.value == 1)
+	{
+		if (scr_sbaralpha.value < 1 && cl_sbar.value == 1)
+			sbaroffset = CLAMP(0.0, sbaroffset * 2.0, 2.0);
+	}
+	if (sbaroffset)
+		sbaroffset = (sbaroffset / 2.0) + 1.0;
 
-    view->origin[2] += sbaroffset;
+	view->origin[2] += sbaroffset;
 	view->model = cl.model_precache[cl.stats[STAT_WEAPON]];
 	view->frame = cl.stats[STAT_WEAPONFRAME];
 	view->colormap = vid.colormap;

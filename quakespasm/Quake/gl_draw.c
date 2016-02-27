@@ -532,27 +532,27 @@ void Draw_SubPic (int x, int y, qpic_t *pic, int ofsx, int ofsy, int w, int h)
 	gl = (glpic_t *)pic->data;
 	GL_Bind (gl->gltexture);
 
-    oldw = gl->sh - gl->sl;
-    oldh = gl->th - gl->tl;
+	oldw = gl->sh - gl->sl;
+	oldh = gl->th - gl->tl;
 
-    nsl = gl->sl + (ofsx * oldw) / pic->width;
-    nsh = nsl + (w * oldw) / pic->width;
+	nsl = gl->sl + (ofsx * oldw) / pic->width;
+	nsh = nsl + (w * oldw) / pic->width;
 
-    ntl = gl->tl + (ofsy * oldh) / pic->height;
-    nth = ntl + (h * oldh) / pic->height;
+	ntl = gl->tl + (ofsy * oldh) / pic->height;
+	nth = ntl + (h * oldh) / pic->height;
 
-    glBegin (GL_QUADS);
+	glBegin (GL_QUADS);
 
-    glTexCoord2f (nsl, ntl);
-    glVertex2f (x, y);
-    glTexCoord2f (nsh, ntl);
-    glVertex2f (x+w, y);
-    glTexCoord2f (nsh, nth);
-    glVertex2f (x+w, y+h);
-    glTexCoord2f (nsl, nth);
-    glVertex2f (x, y+h);
+	glTexCoord2f (nsl, ntl);
+	glVertex2f (x, y);
+	glTexCoord2f (nsh, ntl);
+	glVertex2f (x+w, y);
+	glTexCoord2f (nsh, nth);
+	glVertex2f (x+w, y+h);
+	glTexCoord2f (nsl, nth);
+	glVertex2f (x, y+h);
 
-    glEnd ();
+	glEnd ();
 }
 
 /*
@@ -722,7 +722,7 @@ void GL_SetCanvas (canvastype newcanvas)
 	currentcanvas = newcanvas;
 
 	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity ();
+	glLoadIdentity ();
 
 	switch(newcanvas)
 	{
@@ -735,32 +735,31 @@ void GL_SetCanvas (canvastype newcanvas)
 		glOrtho (0, vid.conwidth, vid.conheight + lines, lines, -99999, 99999);
 		glViewport (glx, gly, glwidth, glheight);
 		break;
-    case CANVAS_CENTERPRINT: //centerprint gets its own canvas for proper offset
-        if (!scr_conscale.value) //autoscale if 0 - make a bit smaller than if 320x240
-            s = floorf(vid.height / 300.0);
-        else
-            s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
+	case CANVAS_CENTERPRINT: //centerprint gets its own canvas for proper offset
+		if (!scr_conscale.value) //autoscale if 0 - make a bit smaller than if 320x240
+			s = floorf(vid.height / 300.0);
+		else
+			s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
 		glOrtho (0, 320, glheight/s, 0, -99999, 99999);
 		glViewport (glx + (glwidth - 320*s) / 2, gly, 320*s, glheight);
 		break;
 	case CANVAS_MENU:
 		if (!scr_menuscale.value) //autoscale if 0
-            s = floorf(q_min((float)glwidth / 640.0, (float)glheight / 240.0));
-        else
-            s = CLAMP (1.0, scr_menuscale.value, q_min((float)glwidth / 640.0, (float)glheight / 240.0));
-
+			s = floorf(q_min((float)glwidth / 640.0, (float)glheight / 240.0));
+		else
+			s = CLAMP (1.0, scr_menuscale.value, q_min((float)glwidth / 640.0, (float)glheight / 240.0));
 		glOrtho (0, 320, 200, 0, -99999, 99999);
 		glViewport (glx + (glwidth - 320*s) / 2, gly + (glheight - 200*s) / 2, 640*s, 200*s);
 		break;
 	case CANVAS_SBAR:
 		if (!scr_sbarscale.value) //autoscale if 0
-        {
-            s = glheight / 240.0;
-            if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
-                s = floorf(s);
-        }
-        else
-            s = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+		{
+			s = glheight / 240.0;
+			if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+				s = floorf(s);
+		}
+		else
+			s = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 		if (cl.gametype == GAME_DEATHMATCH)
 		{
 			glOrtho (0, glwidth / s, 48, 0, -99999, 99999);
@@ -772,19 +771,19 @@ void GL_SetCanvas (canvastype newcanvas)
 			glViewport (glx + (glwidth - 320*s) / 2, gly, 320*s, 48*s);
 		}
 		break;
-    case CANVAS_IBAR_QW: //split for cleaner QW hud support
-        if (!scr_sbarscale.value)
-        {
-            s = glheight / 240.0;
-            if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
-                s = floorf(s);
-        }
-        else
-            s = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+	case CANVAS_IBAR_QW: //split for cleaner QW hud support
+		if (!scr_sbarscale.value)
+		{
+			s = glheight / 240.0;
+			if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+				s = floorf(s);
+		}
+		else
+			s = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
-        glOrtho (0, 44, 188, 0, -99999, 99999);
-        glViewport (glwidth - 44*s, 48*s, 44*s, 188*s);
-        break;
+		glOrtho (0, 44, 188, 0, -99999, 99999);
+		glViewport (glwidth - 44*s, 48*s, 44*s, 188*s);
+		break;
 	case CANVAS_WARPIMAGE:
 		glOrtho (0, 128, 0, 128, -99999, 99999);
 		glViewport (glx, gly+glheight-gl_warpimagesize, gl_warpimagesize, gl_warpimagesize);
@@ -814,7 +813,7 @@ void GL_SetCanvas (canvastype newcanvas)
 	}
 
 	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity ();
+	glLoadIdentity ();
 }
 
 /*
