@@ -792,8 +792,6 @@ void V_CalcRefdef (void)
     float scale = CLAMP (1.0, scr_sbarscale.value, (float) glheight / 240.0);
     scale /= (float) glheight / 240.0; //unit scale
 
-    //scale = (scale / 2.0) + 0.5; //diminish effect of sbar scaling by half
-
     float sbaroffset = 0;
 
     if (scr_viewsize.value == 110) //no invbar
@@ -814,11 +812,11 @@ void V_CalcRefdef (void)
     //anything above 2.0 offset could look cut off
     if(cl_sbar.value == 1)
     {
-        if (scr_sbaralpha.value < 1)
+        if (scr_sbaralpha.value < 1 && cl_sbar.value == 1)
             sbaroffset = CLAMP(0.0, sbaroffset * 2.0, 2.0);
-        else //diminish effect of sbar scaling if solid sbar
-            sbaroffset = (sbaroffset / 2.0) + 1.0;
     }
+    if (sbaroffset)
+        sbaroffset = (sbaroffset / 2.0) + 1.0;
 
     view->origin[2] += sbaroffset;
 	view->model = cl.model_precache[cl.stats[STAT_WEAPON]];
