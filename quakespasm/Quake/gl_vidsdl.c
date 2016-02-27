@@ -142,9 +142,9 @@ QS_PFNGLUNIFORM4FPROC GL_Uniform4fFunc = NULL; //ericw
 //====================================
 
 //johnfitz -- new cvars
-static cvar_t	vid_fullscreen = {"vid_fullscreen", "0", CVAR_ARCHIVE};	// QuakeSpasm, was "1"
-static cvar_t	vid_width = {"vid_width", "800", CVAR_ARCHIVE};		// QuakeSpasm, was 640
-static cvar_t	vid_height = {"vid_height", "600", CVAR_ARCHIVE};	// QuakeSpasm, was 480
+static cvar_t	vid_fullscreen = {"vid_fullscreen", "1", CVAR_ARCHIVE};	// QuakeSpasm, was "1"
+static cvar_t	vid_width = {"vid_width", "0", CVAR_ARCHIVE};		// QuakeSpasm, was 640
+static cvar_t	vid_height = {"vid_height", "0", CVAR_ARCHIVE};	// QuakeSpasm, was 480
 static cvar_t	vid_bpp = {"vid_bpp", "16", CVAR_ARCHIVE};
 static cvar_t	vid_vsync = {"vid_vsync", "0", CVAR_ARCHIVE};
 static cvar_t	vid_fsaa = {"vid_fsaa", "0", CVAR_ARCHIVE}; // QuakeSpasm
@@ -578,7 +578,7 @@ static qboolean VID_SetMode (int width, int height, int bpp, qboolean fullscreen
 
 		if (vid_borderless.value)
 			flags |= SDL_WINDOW_BORDERLESS;
-		
+
 		draw_context = SDL_CreateWindow (caption, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 		if (!draw_context) { // scale back fsaa
 			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
@@ -640,7 +640,7 @@ static qboolean VID_SetMode (int width, int height, int bpp, qboolean fullscreen
 		flags |= SDL_FULLSCREEN;
 	if (vid_borderless.value)
 		flags |= SDL_NOFRAME;
-	
+
 	gl_swap_control = true;
 	if (SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, (vid_vsync.value) ? 1 : 0) == -1)
 		gl_swap_control = false;
@@ -776,9 +776,23 @@ static void VID_Restart (void)
 	TexMgr_RecalcWarpImageSize ();
 
 	//conwidth and conheight need to be recalculated
-	vid.conwidth = (scr_conwidth.value > 0) ? (int)scr_conwidth.value : (scr_conscale.value > 0) ? (int)(vid.width/scr_conscale.value) : vid.width;
+	if (scr_conwidth.value > 0)
+        vid.conwidth = (int)scr_conwidth.value;
+    else
+    {
+        float s;
+
+        if (!scr_conscale.value) //autoscale if 0
+            s = floorf(vid.height / 300.0);
+        else
+            s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
+
+        vid.conwidth = (vid.width / s);
+    }
+
+	//vid.conwidth = (scr_conwidth.value > 0) ? (int)scr_conwidth.value : (scr_conscale.value > 0) ? (int)(vid.width/scr_conscale.value) : vid.width;
 	vid.conwidth = CLAMP (320, vid.conwidth, vid.width);
-	vid.conwidth &= 0xFFFFFFF8;
+	//vid.conwidth &= 0xFFFFFFF8;
 	vid.conheight = vid.conwidth * vid.height / vid.width;
 //
 // keep cvars in line with actual mode
@@ -1528,7 +1542,7 @@ void	VID_Init (void)
 	Cvar_SetCallback (&vid_fsaa, VID_FSAA_f);
 	Cvar_SetCallback (&vid_desktopfullscreen, VID_Changed_f);
 	Cvar_SetCallback (&vid_borderless, VID_Changed_f);
-	
+
 	Cmd_AddCommand ("vid_unlock", VID_Unlock); //johnfitz
 	Cmd_AddCommand ("vid_restart", VID_Restart); //johnfitz
 	Cmd_AddCommand ("vid_test", VID_Test); //johnfitz
@@ -1576,7 +1590,8 @@ void	VID_Init (void)
 	fullscreen = (int)vid_fullscreen.value;
 	fsaa = (int)vid_fsaa.value;
 
-	if (COM_CheckParm("-current"))
+    //if width/height is 0 default to desktop resolution
+	if (COM_CheckParm("-current") || width == 0 || height == 0)
 	{
 		width = display_width;
 		height = display_height;

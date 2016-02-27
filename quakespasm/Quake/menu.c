@@ -985,6 +985,7 @@ enum
 	OPT_SNDVOL,
 	OPT_MUSICVOL,
 	OPT_MUSICEXT,
+	OPT_SBAR,
 	OPT_ALWAYRUN,
 	OPT_INVMOUSE,
 	OPT_ALWAYSMLOOK,
@@ -1018,10 +1019,14 @@ void M_AdjustSliders (int dir)
 
 	switch (options_cursor)
 	{
-	case OPT_SCALE:	// console and menu scale
-		l = ((vid.width + 31) / 32) / 10.0;
-		f = scr_conscale.value + dir * .1;
-		if (f < 1)	f = 1;
+	case OPT_SCALE:	// console and menu scale, full left = autoscale
+		l = q_min((float)glwidth / 320.0, (float)glheight / 240.0);
+		if (!scr_menuscale.value || (dir<0 && scr_menuscale.value == 1)) //skip from 0 right to 1
+            f = scr_conscale.value + dir;
+        else
+            f = scr_conscale.value + dir * .1;
+
+		if (f < 0)	f = 0;
 		else if(f > l)	f = l;
 		Cvar_SetValue ("scr_conscale", f);
 		Cvar_SetValue ("scr_menuscale", f);
@@ -1073,6 +1078,9 @@ void M_AdjustSliders (int dir)
 		Cvar_SetValue ("volume", f);
 		break;
 
+    case OPT_SBAR:
+        Cvar_Set ("cl_sbar", cl_sbar.value ? "0" : "1");
+		break;
 	case OPT_ALWAYRUN:	// always run
 		if (cl_movespeedkey.value <= 1)
 			Cvar_Set ("cl_movespeedkey", "2.0");
@@ -1157,7 +1165,7 @@ void M_Options_Draw (void)
 	M_Print (16, 32 + 8*OPT_DEFAULTS,	"          Reset config");
 
 	// OPT_SCALE:
-	M_Print (16, 32 + 8*OPT_SCALE,		"                 Scale");
+	M_Print (16, 32 + 8*OPT_SCALE,		"              UI Scale");
 	l = (vid.width / 320.0) - 1;
 	r = l > 0 ? (scr_conscale.value - 1) / l : 0;
 	M_DrawSlider (220, 32 + 8*OPT_SCALE, r);
@@ -1176,7 +1184,7 @@ void M_Options_Draw (void)
 	M_Print (16, 32 + 8*OPT_CONTRAST,	"              Contrast");
 	r = vid_contrast.value - 1.0;
 	M_DrawSlider (220, 32 + 8*OPT_CONTRAST, r);
-	
+
 	// OPT_MOUSESPEED:
 	M_Print (16, 32 + 8*OPT_MOUSESPEED,	"           Mouse Speed");
 	r = (sensitivity.value - 1)/10;
@@ -1200,6 +1208,10 @@ void M_Options_Draw (void)
 	// OPT_MUSICEXT:
 	M_Print (16, 32 + 8*OPT_MUSICEXT,	"        External Music");
 	M_DrawCheckbox (220, 32 + 8*OPT_MUSICEXT, bgm_extmusic.value);
+
+	// OPT_SBAR:
+	M_Print (16, 32 + 8*OPT_SBAR,	"        Use Status Bar");
+	M_DrawCheckbox (220, 32 + 8*OPT_SBAR, cl_sbar.value);
 
 	// OPT_ALWAYRUN:
 	M_Print (16, 32 + 8*OPT_ALWAYRUN,	"            Always Run");

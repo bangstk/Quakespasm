@@ -338,7 +338,15 @@ void Sbar_DrawScrollString (int x, int y, int width, const char *str)
 	float scale;
 	int len, ofs, left;
 
-	scale = CLAMP (1.0, scr_sbarscale.value, (float)glwidth / 320.0);
+	if (!scr_sbarscale.value)
+    {
+        scale = glheight / 240.0;
+        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+            scale = floorf(scale);
+    }
+    else
+        scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+
 	left = x * scale;
 	if (cl.gametype != GAME_DEATHMATCH)
 		left += (((float)glwidth - 320.0 * scale) / 2);
@@ -1025,7 +1033,17 @@ void Sbar_Draw (void)
 	GL_SetCanvas (CANVAS_DEFAULT); //johnfitz
 
 	//johnfitz -- don't waste fillrate by clearing the area behind the sbar
-	w = CLAMP (320.0f, scr_sbarscale.value * 320.0f, (float)glwidth);
+	if (!scr_sbarscale.value)
+    {
+        w = glheight / 240.0;
+        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+            w = floorf(w);
+    }
+    else
+        w = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+
+    w *= 240.0f;
+
 	if (sb_lines && glwidth > w)
 	{
 		if (scr_sbaralpha.value < 1)
@@ -1042,9 +1060,9 @@ void Sbar_Draw (void)
 
 	GL_SetCanvas (CANVAS_SBAR); //johnfitz
 
-	if (scr_viewsize.value < 110) //johnfitz -- check viewsize instead of sb_lines
+	if (scr_viewsize.value < 110 || (scr_viewsize.value < 120 && !cl_sbar.value) )
 	{
-		Sbar_DrawInventory ();
+        Sbar_DrawInventory ();
 		if (cl.maxclients != 1)
 			Sbar_DrawFrags ();
 	}
@@ -1059,8 +1077,6 @@ void Sbar_Draw (void)
 	{
 	    if (cl_sbar.value == 1)
             Sbar_DrawPicAlpha (0, 0, sb_sbar, scr_sbaralpha.value); //johnfitz -- scr_sbaralpha
-        else //for QW, draw keys/powerups anyways
-            Sbar_DrawInventory ();
 
    // keys (hipnotic only)
 		//MED 01/04/97 moved keys here so they would not be overwritten
@@ -1277,7 +1293,14 @@ void Sbar_MiniDeathmatchOverlay (void)
 	float	scale; //johnfitz
 	scoreboard_t	*s;
 
-	scale = CLAMP (1.0, scr_sbarscale.value, (float)glwidth / 320.0); //johnfitz
+	if (!scr_sbarscale.value)
+    {
+        scale = glheight / 240.0;
+        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+            scale = floorf(scale);
+    }
+    else
+        scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
 	//MAX_SCOREBOARDNAME = 32, so total width for this overlay plus sbar is 632, but we can cut off some i guess
 	if (glwidth/scale < 512 || scr_viewsize.value >= 120) //johnfitz -- test should consider scr_sbarscale

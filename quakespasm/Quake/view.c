@@ -789,7 +789,17 @@ void V_CalcRefdef (void)
 
 	//restore and improve weapon offset code with status bar
 	//takes sbar scaling into account
-    float scale = CLAMP (1.0, scr_sbarscale.value, (float) glheight / 240.0);
+	float scale;
+
+	if (!scr_sbarscale.value)
+    {
+        scale = glheight / 240.0;
+        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+            scale = floorf(scale);
+    }
+    else
+        scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
+
     scale /= (float) glheight / 240.0; //unit scale
 
     float sbaroffset = 0;

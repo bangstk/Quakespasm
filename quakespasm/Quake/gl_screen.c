@@ -78,12 +78,12 @@ float		scr_con_current;
 float		scr_conlines;		// lines of console to display
 
 //johnfitz -- new cvars
-cvar_t		scr_menuscale = {"scr_menuscale", "1", CVAR_ARCHIVE};
-cvar_t		scr_sbarscale = {"scr_sbarscale", "1", CVAR_ARCHIVE};
+cvar_t		scr_menuscale = {"scr_menuscale", "0", CVAR_ARCHIVE};
+cvar_t		scr_sbarscale = {"scr_sbarscale", "0", CVAR_ARCHIVE};
 cvar_t		scr_sbaralpha = {"scr_sbaralpha", "0.75", CVAR_ARCHIVE};
 cvar_t      cl_sbar = {"cl_sbar", "1", CVAR_ARCHIVE};
 cvar_t		scr_conwidth = {"scr_conwidth", "0", CVAR_ARCHIVE};
-cvar_t		scr_conscale = {"scr_conscale", "1", CVAR_ARCHIVE};
+cvar_t		scr_conscale = {"scr_conscale", "0", CVAR_ARCHIVE};
 cvar_t		scr_crosshairscale = {"scr_crosshairscale", "1", CVAR_ARCHIVE};
 cvar_t		scr_showfps = {"scr_showfps", "0", CVAR_NONE};
 cvar_t		scr_clock = {"scr_clock", "0", CVAR_NONE};
@@ -168,13 +168,17 @@ void SCR_DrawCenterString (void) //actually do the drawing
 	int		j;
 	int		x, y;
 	int		remaining;
+	float   s;
 
 // the finale prints the characters one at a time
 
 	scr_erase_center = 0;
 	start = scr_centerstring;
 
-	float s = CLAMP (1.0, scr_conscale.value, glwidth / 320.0);
+	if (!scr_conscale.value) //autoscale if 0 - make a bit smaller than if 320x240
+        s = floorf(vid.height / 300.0);
+    else
+        s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
 
 	if (cl.intermission) //we're using the regular menu canvas for this so I don't have to keep it centered otherwise
     {
@@ -311,7 +315,15 @@ static void SCR_CalcRefdef (void)
 
 	//johnfitz -- rewrote this section
 	size = scr_viewsize.value;
-	scale = CLAMP (1.0, scr_sbarscale.value, (float)glwidth / 320.0);
+
+	if (!scr_sbarscale.value)
+    {
+        scale = glheight / 240.0;
+        if (!cl_sbar.value || scr_sbaralpha.value < 1.0) //make int if nonsolid sbar
+            scale = floorf(scale);
+    }
+    else
+        scale = CLAMP (1.0, scr_sbarscale.value, (float)glheight / 240.0);
 
 	if (size >= 120 || cl.intermission || scr_sbaralpha.value < 1 || cl_sbar.value < 1) //johnfitz -- scr_sbaralpha.value
 		sb_lines = 0;
@@ -375,9 +387,23 @@ SCR_Conwidth_f -- johnfitz -- called when scr_conwidth or scr_conscale changes
 void SCR_Conwidth_f (cvar_t *var)
 {
 	vid.recalc_refdef = 1;
-	vid.conwidth = (scr_conwidth.value > 0) ? (int)scr_conwidth.value : (scr_conscale.value > 0) ? (int)(vid.width/scr_conscale.value) : vid.width;
+	if (scr_conwidth.value > 0)
+        vid.conwidth = (int)scr_conwidth.value;
+    else
+    {
+        float s;
+
+        if (!scr_conscale.value) //autoscale if 0
+            s = floorf(vid.height / 300.0);
+        else
+            s = CLAMP (1.0, scr_conscale.value, vid.height / 240.0);
+
+        vid.conwidth = (vid.width / s);
+    }
+
+	//vid.conwidth = (scr_conwidth.value > 0) ? (int)scr_conwidth.value : (scr_conscale.value > 0) ? (int)(vid.width/scr_conscale.value) : vid.width;
 	vid.conwidth = CLAMP (320, vid.conwidth, vid.width);
-	vid.conwidth &= 0xFFFFFFF8;
+	//vid.conwidth &= 0xFFFFFFF8;
 	vid.conheight = vid.conwidth * vid.height / vid.width;
 }
 
