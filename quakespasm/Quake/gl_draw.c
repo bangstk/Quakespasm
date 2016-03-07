@@ -748,7 +748,7 @@ void GL_SetCanvas (canvastype newcanvas)
 			s = floorf(q_min((float)glwidth / 640.0, (float)glheight / 240.0));
 		else
 			s = CLAMP (1.0, scr_menuscale.value, q_min((float)glwidth / 640.0, (float)glheight / 240.0));
-		glOrtho (0, 320, 200, 0, -99999, 99999);
+		glOrtho (0, 640, 200, 0, -99999, 99999);
 		glViewport (glx + (glwidth - 320*s) / 2, gly + (glheight - 200*s) / 2, 640*s, 200*s);
 		break;
 	case CANVAS_SBAR:
